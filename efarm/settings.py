@@ -121,6 +121,7 @@ DJOSER = {
 CORS_ALLOWED_ORIGINS = [
     "*",
 ]
+#rrrr
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
