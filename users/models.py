@@ -4,63 +4,40 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 from users.choices import *
 from users.validators import *
+from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.utils.translation import gettext_lazy as _
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.utils import timezone
+
+from .managers import UserManager
+# Create your models here.
+
+AUTH_PROVIDERS ={'email':'email', 'google':'google', 'github':'github', 'linkedin':'linkedin'}
 
 
-class CustomUser(AbstractUser):
-    """
-        Custom user model representing a user in the farm management system.
-
-        Fields:
-        - `username`: A unique character field representing the username of the user.
-                      It is limited to a maximum length of 45 characters.
-        - `first_name`: A character field representing the first name of the user.
-                         It is limited to a maximum length of 20 characters.
-        - `last_name`: A character field representing the last name of the user.
-                        It is limited to a maximum length of 20 characters.
-        - `phone_number`: A phone number field representing the phone number of the user.
-                          It is limited to a maximum length of 13 characters and must be unique.
-        - `sex`: A character field representing the gender of the user.
-                 The available choices are defined in the `SexChoices` enum.
-                 It is limited to a maximum length of 6 characters.
-        - `is_farm_owner`: A boolean field representing whether the user is a farm owner.
-        - `is_farm_manager`: A boolean field representing whether the user is a farm manager.
-        - `is_assistant_farm_manager`: A boolean field representing whether the user is an assistant farm manager.
-        - `is_team_leader`: A boolean field representing whether the user is a team leader.
-        - `is_farm_worker`: A boolean field representing whether the user is a farm worker.
-
-        Methods:
-        - `assign_farm_owner()`: Assigns the user as a farm owner and updates related fields accordingly.
-        - `assign_farm_manager()`: Assigns the user as a farm manager and updates related fields accordingly.
-        - `assign_assistant_farm_manager()`: Assigns the user as an assistant farm manager and updates related fields accordingly.
-        - `assign_team_leader()`: Assigns the user as a team leader and updates related fields accordingly.
-        - `assign_farm_worker()`: Assigns the user as a farm worker and updates related fields accordingly.
-        - `dismiss_farm_owner()`: Dismisses the user from the farm owner role.
-        - `dismiss_farm_manager()`: Dismisses the user from the farm manager role.
-        - `dismiss_assistant_farm_manager()`: Dismisses the user from the assistant farm manager role.
-        - `dismiss_team_leader()`: Dismisses the user from the team leader role.
-        - `dismiss_farm_worker()`: Dismisses the user from the farm worker role.
-        - `get_full_name()`: Returns the full name of the user.
-        - `get_role()`: Returns the role of the user based on their assigned roles.
-        - `get_farm_workers()`: Retrieves all farm workers
-        - `get_team_leaders()`: Retrieves all team leaders
-        - `get_assistant_farm_managers()`: Retrieves all assistant farm managers
-        - `get_farm_managers()`: Retrieves all farm managers
-        - `get_farm_owners()`: Retrieves all farm owners
-        - `generate_username(first_name, last_name)`: Generates a unique username based on the user's first name and last name.
-
-        """
-    username = models.CharField(max_length=45, unique=True)
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    id = models.BigAutoField(primary_key=True, editable=False) 
+    email = models.EmailField(
+        max_length=255, verbose_name=_("Email Address"), unique=True
+    )
+    auth_provider=models.CharField(max_length=50, blank=False, null=False, default=AUTH_PROVIDERS.get('email'))
+    registration_time = models.DateTimeField(auto_now_add=True)
+    #username = models.CharField(max_length=45, unique=True)
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
-    phone_number = PhoneNumberField( unique=True)
+    phone_number = PhoneNumberField(blank=True)
     sex = models.CharField(choices=SexChoices.choices, max_length=6)
     is_farm_owner = models.BooleanField(default=False)
     is_farm_manager = models.BooleanField(default=False)
     is_assistant_farm_manager = models.BooleanField(default=False)
     is_team_leader = models.BooleanField(default=False)
     is_farm_worker = models.BooleanField(default=False)
+    is_staff =models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=False)
 
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'phone_number', 'sex']
+
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'phone_number' ]#'sex'
 
     def assign_farm_owner(self):
         self.is_farm_owner = True
@@ -156,24 +133,54 @@ class CustomUser(AbstractUser):
     def get_farm_owners(self):
         return CustomUser.objects.filter(is_farm_owner=True)
 
-    def clean(self):
-        CustomUserValidator.validate_sex(self.sex)
-        CustomUserValidator.validate_username(self.username)
+  
+   
+
+
+    USERNAME_FIELD = "email"
+
+    REQUIRED_FIELDS = ["first_name", "last_name"]
+
+    objects = UserManager()
+
+    def tokens(self):    
+        refresh = RefreshToken.for_user(self)
+        return {
+            "refresh":str(refresh),
+            "access":str(refresh.access_token)
+        }
+
 
     def __str__(self):
-        return self.username
+        return self.email
 
-    def save(self, *args, **kwargs):
-        self.clean()
-        super().save(*args, **kwargs)
+    @property
+    def get_full_name(self):
+        return f"{self.first_name.title()} {self.last_name.title()}"
 
-    def generate_username(first_name, last_name):
-        base_username = slugify(f"{first_name}-{last_name}")
-        username = base_username
-        counter = 1
 
-        while CustomUser.objects.filter(username=username).exists():
-            username = f"{base_username}-{counter}"
-            counter += 1
+class OneTimePassword(models.Model):
+    user=models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    otp=models.CharField(max_length=6)
 
-        return username
+
+    def __str__(self):
+        return f"{self.user.first_name} - otp code"
+    
+
+
+
+class UserActivity(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    login_time = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.login_time}"
+    
+
+
+
+
+class UserRegistration(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    registration_time = models.DateTimeField(auto_now_add=True)

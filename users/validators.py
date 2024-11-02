@@ -10,7 +10,7 @@ class CustomUserValidator:
     - `validate_username(username)`: Validates that the username is unique and exists in the database.
 
     """
-
+'''
     @staticmethod
     def validate_sex(sex):
         """
@@ -47,3 +47,4 @@ class CustomUserValidator:
 
         if CustomUser.objects.filter(username=username).exclude(username=username).exists():
             raise ValidationError("Username already exists.")
+'''

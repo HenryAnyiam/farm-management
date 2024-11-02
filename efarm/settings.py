@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+from pathlib import Path
+from datetime import timedelta
+import os
+import logging.config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,7 +45,6 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "django_extensions",
     "corsheaders",
-    "djoser",
     "django_filters",
     "drf_yasg",
     "phonenumber_field",
@@ -51,6 +54,7 @@ INSTALLED_APPS = [
     "poultry_inventory",
     "users",
 ]
+
 
 AUTH_USER_MODEL = "users.CustomUser"
 
@@ -103,20 +107,20 @@ DATABASES = {
 }
 
 
-# REST FRAMEWORK
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication"
-    ],
-    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+REST_FRAMEWORK={
+    'NON_FIELD_ERRORS_KEY':'error',
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+
+}
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-DJOSER = {
-    "SERIALIZERS": {
-        "user_create": "users.serializers.CustomUserCreateSerializer",
-        "user": "users.serializers.CustomUserSerializer",
-    },
-}
 
 
 CORS_ALLOW_ALL_ORIGINS=True
@@ -167,3 +171,14 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+FRONTEND_URL = 'https://www.nowbrandme.eu'
+
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'taskhub2023@gmail.com'
+EMAIL_HOST_PASSWORD = 'xmyp fkpl evos iltv'
+EMAIL_PORT = '587'
+DEFAULT_FROM_EMAIL="ATTAHATTA37@gmail.com"
+EMAIL_USE_TLS=True

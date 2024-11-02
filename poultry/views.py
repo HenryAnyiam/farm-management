@@ -29,6 +29,7 @@ class FlockSourceViewSet(viewsets.ModelViewSet):
             permission_classes = [CanViewFlockSource]
         return [permission() for permission in permission_classes]
 
+
     def update(self, request, *args, **kwargs):
         raise MethodNotAllowed("PUT")
 

@@ -2,6 +2,8 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import BasePermission
 
 
+
+
 class IsFarmOwner(BasePermission):
     """
     Custom permission class that allows only farm owners to perform an action.
@@ -104,3 +106,5 @@ class IsTeamLeader(BasePermission):
                                               or request.user.is_farm_manager or request.user.is_farm_owner):
             return True
         raise PermissionDenied(self.message)
+
+        

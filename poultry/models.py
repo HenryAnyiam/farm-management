@@ -287,12 +287,13 @@ class FlockBreedInformation(models.Model):
     chicken_type = models.CharField(max_length=15, choices=ChickenTypeChoices.choices)
     date_added = models.DateField(auto_now_add=True)
     average_mature_weight_in_kgs = models.DecimalField(max_digits=3, decimal_places=2)
-    average_egg_production = models.PositiveIntegerField(null=True)
+    average_egg_production = models.PositiveIntegerField(blank =True, null=True)
     maturity_age_in_weeks = models.PositiveIntegerField(validators=[MinValueValidator(8), MaxValueValidator(24)])
-
+    
     def clean(self):
-        FlockBreedInformationValidator.validate_fields(self.chicken_type, self.average_egg_production,
+        FlockBreedInformationValidator.validate_fields(self.chicken_type, 
                                                        self.average_mature_weight_in_kgs, self.maturity_age_in_weeks)
+                                                       
 
     def save(self, *args, **kwargs):
         self.clean()

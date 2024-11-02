@@ -18,12 +18,14 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
+from django.contrib import admin
+
 schema_view = get_schema_view(
    openapi.Info(
       title="E-Farm API",
       default_version='v1',
       description="Ad Hoc Implementation of E-Farm Application",
-      contact=openapi.Contact(email="peterevance1@gmail.com"),
+      contact=openapi.Contact(email="attahattah37@gmail.com"),
       license=openapi.License(name="BSD License"),
    ),
    public=True,
@@ -31,12 +33,11 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path('auth/', include('djoser.urls')),
-    path('api-auth/', include('rest_framework.urls')),
 
     # Other URL patterns for the project
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path("admin/", admin.site.urls),
 
     # app-specific URLs
     #path('dairy/', include('dairy.urls', namespace='dairy')),
