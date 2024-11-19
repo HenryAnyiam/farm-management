@@ -38,7 +38,6 @@ urlpatterns = [
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path("admin/", admin.site.urls),
-
     # app-specific URLs
     #path('dairy/', include('dairy.urls', namespace='dairy')),
     #path('dairy_inventory/', include('dairy_inventory.urls')),

@@ -6,7 +6,7 @@ from django.utils import timezone
 from poultry.utils import todays_date
 from poultry.validators import *
 
-
+#9
 class FlockSource(models.Model):
     """
     The model represents the source of a flock in a poultry farm.
@@ -30,7 +30,7 @@ class FlockSource(models.Model):
         self.clean()
         super().save(*args, **kwargs)
 
-
+#8
 class FlockBreed(models.Model):
     """
     Model representing a breed.
@@ -55,7 +55,7 @@ class FlockBreed(models.Model):
         self.clean()
         super().save(*args, **kwargs)
 
-
+#7
 class HousingStructure(models.Model):
     """
     The model represents a housing structure for poultry in a farm.
@@ -111,7 +111,7 @@ class HousingStructure(models.Model):
         self.clean()
         super().save(*args, **kwargs)
 
-
+#6
 class Flock(models.Model):
     """
     The model represents a flock in a poultry farm.
@@ -217,7 +217,7 @@ class Flock(models.Model):
         self.clean()
         super().save(*args, **kwargs)
 
-
+#5
 class FlockHistory(models.Model):
     flock = models.ForeignKey(Flock, on_delete=models.CASCADE)
     rearing_method = models.CharField(
@@ -231,7 +231,7 @@ class FlockHistory(models.Model):
     def __str__(self):
         return f"History for {self.flock}"
 
-
+#4
 class FlockMovement(models.Model):
     flock = models.ForeignKey(Flock, on_delete=models.CASCADE)
     from_structure = models.ForeignKey(HousingStructure, on_delete=models.CASCADE, related_name='outgoing_movements')
@@ -248,7 +248,7 @@ class FlockMovement(models.Model):
     def __str__(self):
         return f'Movement of Flock {self.flock.id} ({self.from_structure} -> {self.to_structure})'
 
-
+#3
 class FlockInspectionRecord(models.Model):
     flock = models.ForeignKey(Flock, on_delete=models.CASCADE)
     date_of_inspection = models.DateTimeField(auto_now_add=True)
@@ -264,7 +264,7 @@ class FlockInspectionRecord(models.Model):
         FlockInspectionRecordValidator.validate_daily_number_of_inspection_records(self.date_of_inspection)
         FlockInspectionRecordValidator.validate_inspection_record_time_separation(self.flock, self)
 
-
+#2
 class FlockBreedInformation(models.Model):
     """
     Model representing the information about a flock breed.
@@ -299,7 +299,7 @@ class FlockBreedInformation(models.Model):
         self.clean()
         super().save(*args, **kwargs)
 
-
+#1
 class EggCollection(models.Model):
     flock = models.ForeignKey(Flock, on_delete=models.CASCADE)
     date_of_collection = models.DateField(auto_now_add=True)

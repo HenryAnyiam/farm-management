@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from poultry.models import *
 
-
+#5S
 class FlockInventory(models.Model):
     """
     The model represents the inventory of a flock.
@@ -65,7 +65,7 @@ class FlockInventory(models.Model):
             mortality_rate=self.calculate_mortality_rate
         )
 
-
+#4
 class FlockInventoryHistory(models.Model):
     """
     The model represents the history of a flock's inventory.
@@ -86,11 +86,11 @@ class FlockInventoryHistory(models.Model):
     number_of_birds = models.PositiveIntegerField()
     mortality_rate = models.DecimalField(max_digits=5, decimal_places=2)
 
-
+#3
 class EggInventory(models.Model):
     total_egg_count = models.PositiveIntegerField(default=0, editable=False)
 
-
+#2
 class EggInventoryHistory(models.Model):
     egg_inventory = models.ForeignKey(EggInventory, on_delete=models.CASCADE)
     date_time = models.DateTimeField(auto_now_add=True)
@@ -100,7 +100,7 @@ class EggInventoryHistory(models.Model):
         return f"Egg inventory history - {self.egg_count}"
 
 
-
+#1
 
 # Daily Farm Data Model
 class FarmData(models.Model):
