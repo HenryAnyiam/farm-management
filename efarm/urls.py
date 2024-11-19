@@ -44,6 +44,6 @@ urlpatterns = [
     #path('dairy_inventory/', include('dairy_inventory.urls')),
     path('poultry/', include('poultry.urls', namespace='poultry')),
     path('poultry_inventory/', include('poultry_inventory.urls', namespace='poultry_inventory')),
-    path('users/', include('users.urls', namespace='users')),
+    path('users/', include('users.urls', namespace='users'))
 
 ]
