@@ -128,6 +128,7 @@ CORS_ALLOW_CREDENTIALS=True
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
 ]
+ALLOWED_HOSTS = ['*']
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
