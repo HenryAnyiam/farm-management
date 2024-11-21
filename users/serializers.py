@@ -16,6 +16,10 @@ from django.urls import reverse
 from .utils import send_mail
 from django.core.mail import EmailMessage
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.core.mail import EmailMessage
+from .models import CustomUser
+
 
 CustomUser = get_user_model()
 
@@ -160,14 +164,6 @@ class LoginSerializer(serializers.ModelSerializer):
         }
 
 
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.encoding import smart_bytes
-from django.utils.http import urlsafe_base64_encode
-from django.urls import reverse
-from rest_framework import serializers
-from django.conf import settings
-from django.core.mail import EmailMessage
-from .models import CustomUser
 
 class PasswordResetRequestSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=255)
@@ -271,7 +267,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'email', 'first_name', 'last_name', 'bio', 'location']
+        fields = ['id', 'email', 'first_name', 'last_name', 'bio', 'location',"image"]
         read_only_fields = ['email', 'date_joined']
 
     def update(self, instance, validated_data):
