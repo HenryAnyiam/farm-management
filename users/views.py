@@ -5,6 +5,23 @@ from rest_framework.views import APIView
 from users.models import *
 from users.permissions import *
 from users.serializers import *
+from django.shortcuts import render
+from rest_framework.generics import GenericAPIView
+from .models import OneTimePassword
+from .utils import send_generated_otp_to_email
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from rest_framework.permissions import IsAuthenticated
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view, permission_classes, parser_classes
+from rest_framework.parsers import MultiPartParser, FormParser
+from django.utils import timezone
+from .serializers import UserSerializer
+from django.utils.timezone import now, timedelta
+from django.db.models import Count
+from datetime import datetime, timedelta
+import logging
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
@@ -654,26 +671,7 @@ class GenerateUsernameSlugAPIView(APIView):
 
 
 
-from django.shortcuts import render
-from rest_framework.generics import GenericAPIView
-from rest_framework.response import Response
-from .models import OneTimePassword
-from .serializers import PasswordResetRequestSerializer,LogoutUserSerializer, UserRegisterSerializer, LoginSerializer, SetNewPasswordSerializer,UserProfileSerializer
-from rest_framework import status
-from .utils import send_generated_otp_to_email
-from django.utils.http import urlsafe_base64_decode
-from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from rest_framework.permissions import IsAuthenticated
-from .models import *
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.decorators import api_view, permission_classes, parser_classes
-from rest_framework.parsers import MultiPartParser, FormParser
-from django.utils import timezone
-from .serializers import UserSerializer
-from django.utils.timezone import now, timedelta
-from django.db.models import Count
-from datetime import datetime, timedelta
+
 
 
 # Create your views here.
@@ -695,27 +693,7 @@ def getUserProfile(request):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-'''
-class RegisterView(GenericAPIView):
-    serializer_class = UserRegisterSerializer
 
-    def post(self, request):
-        user = request.data
-        serializer=self.serializer_class(data=user)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            user_data=serializer.data
-            send_generated_otp_to_email(user_data['email'], request)
-            return Response({
-                'data':user_data,
-                'message':'thanks for signing up a passcode has be sent to verify your email'
-            }, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-'''
-from rest_framework import status
-from rest_framework.generics import GenericAPIView
-from rest_framework.response import Response
-import logging
 
 logger = logging.getLogger('accounts')
 
@@ -777,10 +755,6 @@ class PasswordResetRequestView(GenericAPIView):
         return Response({'message':'we have sent you a link to reset your password'}, status=status.HTTP_200_OK)
         # return Response({'message':'user with that email does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 '''  
-from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from .serializers import PasswordResetRequestSerializer
 
 class PasswordResetRequestView(APIView):
     def post(self, request):
@@ -789,10 +763,7 @@ class PasswordResetRequestView(APIView):
             return Response({"detail": "Password reset link has been sent to your email"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from .serializers import PasswordResetRequestSerializer
+
 
 class PasswordResetRequestView(APIView):
     def post(self, request):
@@ -807,7 +778,7 @@ class PasswordResetConfirm(GenericAPIView):
     def get(self, request, uidb64, token):
         try:
             user_id=smart_str(urlsafe_base64_decode(uidb64))
-            user=User.objects.get(id=user_id)
+            user=CustomUser.objects.get(id=user_id)
 
             if not PasswordResetTokenGenerator().check_token(user, token):
                 return Response({'message':'token is invalid or has expired'}, status=status.HTTP_401_UNAUTHORIZED)

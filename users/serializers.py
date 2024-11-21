@@ -267,7 +267,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'email', 'first_name', 'last_name', 'bio', 'location',"image"]
+        fields = ['id', 'email', 'first_name', 'last_name',"image"]
         read_only_fields = ['email', 'date_joined']
 
     def update(self, instance, validated_data):
