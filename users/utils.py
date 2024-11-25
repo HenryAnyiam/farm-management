@@ -10,7 +10,8 @@ from os import getenv
 from pyotp import TOTP
 from celery import shared_task
 from datetime import datetime, timedelta
-
+from rest_framework.views import exception_handler
+from rest_framework.response import Response
 
 '''
 def send_generated_otp_to_email(email, request): 
@@ -148,3 +149,25 @@ def send_generated_otp_to_email(email, request):
     #send the email 
     d_email=EmailMessage(subject=subject, body=email_body, from_email=from_email, to=[user.email])
     d_email.send()
+
+
+
+
+
+def custom_exception_handler(exc, context):
+    # Get the standard response from DRF's default exception handler
+    response = exception_handler(exc, context)
+
+    if response is not None:
+        # Customize the error response structure
+        custom_response = {
+            "success": False,
+            "status_code": response.status_code,
+            "errors": response.data,
+        }
+        return Response(custom_response, status=response.status_code)
+
+    # If no response is generated, return the default error
+    return Response(
+        {"success": False, "error": "An unexpected error occurred."}, status=500
+    )

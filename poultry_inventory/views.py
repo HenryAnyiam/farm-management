@@ -42,7 +42,7 @@ class FarmDataCreateView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(CustomUser=self.request.user)
 
 # List Farm Data for reports
 class FarmDataListView(generics.ListAPIView):
@@ -51,8 +51,7 @@ class FarmDataListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        # Filter the farm data based on the authenticated user
         user = self.request.user
-        # Only admin and managers can see all data, others can only see their own data
-        if user.role in ['ADMIN', 'MANAGER']:
-            return FarmData.objects.all()
-        return FarmData.objects.filter(user=user)
+        return FarmData.objects.filter(CustomUser = user)
+       

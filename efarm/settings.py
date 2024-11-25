@@ -109,6 +109,7 @@ DATABASES = {
 
 REST_FRAMEWORK={
     'NON_FIELD_ERRORS_KEY':'error',
+    'EXCEPTION_HANDLER': 'users.utils.custom_exception_handler',
         'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
