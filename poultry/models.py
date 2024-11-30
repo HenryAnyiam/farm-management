@@ -85,6 +85,7 @@ class HousingStructure(models.Model):
     category = models.CharField(
         max_length=21, choices=HousingStructureCategoryChoices.choices
     )
+    name = models.CharField(max_length=50)
 
     def __str__(self):
         """
@@ -152,14 +153,7 @@ class Flock(models.Model):
     current_housing_structure = models.ForeignKey(HousingStructure, on_delete=models.PROTECT, related_name="flocks")
     date_established = models.DateField(auto_now_add=True)
     is_present = models.BooleanField(default=True, editable=False)
-
-    @property
-    def name(self):
-        """
-        Returns the name of the flock, including its ID and the date of establishment.
-
-        """
-        return f'Flock {self.id} - {self.date_established.strftime("%B %d, %Y")}'
+    name = models.CharField(max_length=50)
 
     @property
     def age_in_weeks(self):

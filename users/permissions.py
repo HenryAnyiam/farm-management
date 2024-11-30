@@ -1,5 +1,6 @@
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import BasePermission
+from users.choices import RoleChoices
 
 
 
@@ -20,7 +21,7 @@ class IsFarmOwner(BasePermission):
 
     def has_permission(self, request, view):
         # Check if the current user is a farm owner
-        if request.user.is_authenticated and request.user.is_farm_owner:
+        if request.user.is_authenticated and request.user.role >= RoleChoices.OWNER:
             return True
         raise PermissionDenied(self.message)
 
@@ -40,7 +41,7 @@ class IsFarmManager(BasePermission):
 
     def has_permission(self, request, view):
         # Check if the current user is a farm manager
-        if request.user.is_authenticated and (request.user.is_farm_manager or request.user.is_farm_owner):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.MANAGER:
             return True
         raise PermissionDenied(self.message)
 
@@ -60,8 +61,7 @@ class IsAssistantFarmManager(BasePermission):
 
     def has_permission(self, request, view):
         # Check if the current user is an assistant farm manager
-        if request.user.is_authenticated and (request.user.is_assistant_farm_manager or request.user.is_farm_manager
-                                              or request.user.is_farm_owner):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.ASST_MANAGER:
             return True
         raise PermissionDenied(self.message)
 
@@ -81,8 +81,7 @@ class IsFarmWorker(BasePermission):
 
     def has_permission(self, request, view):
         # Check if the current user is a farm worker
-        if request.user.is_authenticated and (request.user.is_farm_owner or request.user.is_farm_worker or
-                                              request.user.is_farm_manager or request.user.is_assistant_farm_manager):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.WORKER:
             return True
         raise PermissionDenied(self.message)
 
@@ -102,9 +101,6 @@ class IsTeamLeader(BasePermission):
 
     def has_permission(self, request, view):
         # Check if the current user is a team leader
-        if request.user.is_authenticated and (request.user.is_team_leader or request.user.is_assistant_farm_manager
-                                              or request.user.is_farm_manager or request.user.is_farm_owner):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.TEAM_LEADER:
             return True
         raise PermissionDenied(self.message)
-
-        

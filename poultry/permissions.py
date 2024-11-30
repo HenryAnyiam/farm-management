@@ -1,5 +1,6 @@
 from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
 from rest_framework.permissions import BasePermission
+from users.choices import RoleChoices
 
 
 class CanAddFlockSource(BasePermission):
@@ -25,9 +26,7 @@ class CanAddFlockSource(BasePermission):
         Returns:
             bool: True if the user is a farm owner or a farm manager, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner or request.user.is_farm_manager
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.MANAGER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
@@ -59,9 +58,7 @@ class CanDeleteFlockSource(BasePermission):
         Returns:
             bool: True if the user is a farm owner or a farm manager, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner or request.user.is_farm_manager
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.MANAGER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
@@ -93,12 +90,7 @@ class CanViewFlockSource(BasePermission):
         Returns:
             bool: True if the user has one of the allowed roles, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner
-            or request.user.is_farm_worker
-            or request.user.is_farm_manager
-            or request.user.is_assistant_farm_manager
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.WORKER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
@@ -130,9 +122,7 @@ class CanAddFlockBreed(BasePermission):
         Returns:
             bool: True if the user is a farm owner or a farm manager, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner or request.user.is_farm_manager
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.MANAGER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
@@ -164,9 +154,7 @@ class CanDeleteFlockBreed(BasePermission):
         Returns:
             bool: True if the user is a farm owner or a farm manager, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner or request.user.is_farm_manager
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.MANAGER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
@@ -198,12 +186,7 @@ class CanViewFlockBreeds(BasePermission):
         Returns:
             bool: True if the user has one of the allowed roles, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner
-            or request.user.is_farm_worker
-            or request.user.is_farm_manager
-            or request.user.is_assistant_farm_manager
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.WORKER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
@@ -235,9 +218,7 @@ class CanActOnHousingStructure(BasePermission):
         Returns:
             bool: True if the user is a farm owner or a farm manager, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner or request.user.is_farm_manager
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.MANAGER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
@@ -269,9 +250,7 @@ class CanAddFlock(BasePermission):
         Returns:
             bool: True if the user is a farm owner or a farm manager, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner or request.user.is_farm_manager
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.MANAGER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
@@ -303,9 +282,7 @@ class CanUpdateFlock(BasePermission):
         Returns:
             bool: True if the user is a farm owner or a farm manager, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner or request.user.is_farm_manager
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.MANAGER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
@@ -337,9 +314,7 @@ class CanDeleteFlock(BasePermission):
         Returns:
             bool: True if the user is a farm owner or a farm manager, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner or request.user.is_farm_manager
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.MANAGER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
@@ -371,12 +346,7 @@ class CanViewFlock(BasePermission):
         Returns:
             bool: True if the user has one of the allowed roles, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner
-            or request.user.is_farm_worker
-            or request.user.is_farm_manager
-            or request.user.is_assistant_farm_manager
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.WORKER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
@@ -408,9 +378,7 @@ class CanActOnFlockHistory(BasePermission):
         Returns:
             bool: True if the user is a farm owner or a farm manager, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner or request.user.is_farm_manager
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.MANAGER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
@@ -442,9 +410,7 @@ class CanActOnFlockMovement(BasePermission):
         Returns:
             bool: True if the user is a farm owner or a farm manager, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner or request.user.is_farm_manager
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.MANAGER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
@@ -474,13 +440,7 @@ class CanAddFlockInspection(BasePermission):
         Returns:
             bool: True if the user is a farm staff, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner
-            or request.user.is_farm_worker
-            or request.user.is_farm_manager
-            or request.user.is_assistant_farm_manager
-            or request.user.is_farm_worker
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.WORKER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
@@ -510,13 +470,7 @@ class CanAddViewUpdateFlockInspection(BasePermission):
         Returns:
             bool: True if the user is a farm staff, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner
-            or request.user.is_farm_worker
-            or request.user.is_farm_manager
-            or request.user.is_assistant_farm_manager
-            or request.user.is_farm_worker
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.WORKER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
@@ -548,9 +502,7 @@ class CanDeleteFlockInspection(BasePermission):
         Returns:
             bool: True if the user is a farm owner or a farm manager, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner or request.user.is_farm_manager
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.MANAGER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
@@ -582,9 +534,7 @@ class CanActOnFlockBreedInformation(BasePermission):
         Returns:
             bool: True if the user is a farm owner or a farm manager, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner or request.user.is_farm_manager
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.MANAGER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
@@ -614,12 +564,7 @@ class CanAddEggCollection(BasePermission):
         Returns:
             bool: True if the user is a farm staff, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner
-            or request.user.is_farm_manager
-            or request.user.is_assistant_farm_manager
-            or request.user.is_farm_worker
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.MANAGER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
@@ -651,9 +596,7 @@ class CanViewEggCollection(BasePermission):
         Returns:
             bool: True if the user is a farm owner or a farm manager, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner or request.user.is_farm_manager
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.MANAGER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
@@ -685,9 +628,7 @@ class CanDeleteEggCollection(BasePermission):
         Returns:
             bool: True if the user is a farm owner or a farm manager, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and (
-            request.user.is_farm_owner or request.user.is_farm_manager
-        ):
+        if request.user.is_authenticated and request.user.role >= RoleChoices.MANAGER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(

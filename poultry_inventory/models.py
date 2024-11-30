@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from poultry.models import *
-from users.models import CustomUser
+from users.models import User
 
 
 #5S
@@ -106,7 +106,7 @@ class EggInventoryHistory(models.Model):
 
 # Daily Farm Data Model
 class FarmData(models.Model):
-    CustomUser = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
+    CustomUser = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     feed_intake = models.FloatField()
     water_intake = models.FloatField()
     vaccine_administered = models.CharField(max_length=100)

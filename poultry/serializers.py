@@ -3,21 +3,45 @@ from poultry.models import *
 
 
 class FlockSourceSerializer(serializers.ModelSerializer):
+
+    total_registered = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = FlockSource
         fields = "__all__"
+    
+    def get_total_registered(self, obj):
+        """get total flocks registered to house"""
+
+        return obj.flocks.count()
 
 
 class FlockBreedSerializer(serializers.ModelSerializer):
+
+    total_registered = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = FlockBreed
         fields = "__all__"
+    
+    def get_total_registered(self, obj):
+        """get total flocks registered to house"""
+
+        return obj.flocks.count()
 
 
 class HousingStructureSerializer(serializers.ModelSerializer):
+
+    total_registered = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = HousingStructure
         fields = "__all__"
+
+    def get_total_registered(self, obj):
+        """get total flocks registered to house"""
+
+        return obj.flocks.count()
 
 
 class FlockSerializer(serializers.ModelSerializer):

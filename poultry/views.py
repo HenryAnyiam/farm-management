@@ -37,20 +37,7 @@ class FlockSourceViewSet(viewsets.ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
 
         if not queryset.exists():
-            if request.query_params:
-                # If query parameters are provided, but there are no matching flock sources
-                return Response(
-                    {
-                        "detail": "No flock source(s) found matching the provided filters."
-                    },
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-            else:
-                # If no query parameters are provided, and there are no flock sources in the database
-                return Response(
-                    {"detail": "No flock sources found in the farm yet."},
-                    status=status.HTTP_200_OK,
-                )
+            return Response([], status=status.HTTP_200_OK)
 
         serializer = self.get_serializer(queryset, many=True)
 
@@ -85,20 +72,7 @@ class FlockBreedViewSet(viewsets.ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
 
         if not queryset.exists():
-            if request.query_params:
-                # If query parameters are provided, but there are no matching flock breeds
-                return Response(
-                    {
-                        "detail": "No flock breed(s) found matching the provided filters."
-                    },
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-            else:
-                # If no query parameters are provided, and there are no flock breeds in the database
-                return Response(
-                    {"detail": "No flock breeds found in the farm yet."},
-                    status=status.HTTP_200_OK,
-                )
+            return Response([], status=status.HTTP_200_OK)
 
         serializer = self.get_serializer(queryset, many=True)
 
@@ -117,20 +91,7 @@ class HousingStructureViewSet(viewsets.ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
 
         if not queryset.exists():
-            if request.query_params:
-                # If query parameters are provided, but there are no matching housing types
-                return Response(
-                    {
-                        "detail": "No Housing structure(s) found matching the provided filters."
-                    },
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-            else:
-                # If no query parameters are provided, and there are no housing structures in the database
-                return Response(
-                    {"detail": "No housing structure found in the farm yet."},
-                    status=status.HTTP_200_OK,
-                )
+            return Response([], status=status.HTTP_200_OK)
 
         serializer = self.get_serializer(queryset, many=True)
 
@@ -170,19 +131,7 @@ class FlockViewSet(viewsets.ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
 
         if not queryset.exists():
-            if request.query_params:
-                # If query parameters are provided, but there are no matching flocks
-                return Response(
-                    {"detail": "No flock(s) found matching the provided filters."},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-            else:
-                # If no query parameters are provided, and there are no flock in the database
-                return Response(
-                    {"detail": "No flock found in the farm yet."},
-                    status=status.HTTP_200_OK,
-                )
-
+            return Response([], status=status.HTTP_200_OK)
         serializer = self.get_serializer(queryset, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
