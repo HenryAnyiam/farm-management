@@ -3,10 +3,14 @@ from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.filters import OrderingFilter
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError as DRFValidationError
 
 from poultry.filters import *
 from poultry.permissions import *
 from poultry.serializers import *
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class FlockSourceViewSet(viewsets.ModelViewSet):
@@ -42,6 +46,20 @@ class FlockSourceViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
+        except DRFValidationError as e:
+            return Response({'detail': e.detail}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f'Exception, {str(e)}')
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class FlockBreedViewSet(viewsets.ModelViewSet):
@@ -77,6 +95,20 @@ class FlockBreedViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
+        except DRFValidationError as e:
+            return Response({'detail': e.detail}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f'Exception, {str(e)}')
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class HousingStructureViewSet(viewsets.ModelViewSet):
@@ -96,6 +128,20 @@ class HousingStructureViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
+        except DRFValidationError as e:
+            return Response({'detail': e.detail}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f'Exception, {str(e)}')
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class FlockViewSet(viewsets.ModelViewSet):
@@ -135,6 +181,21 @@ class FlockViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
+        except DRFValidationError as e:
+            return Response({'detail': e.detail}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f'Exception, {str(e)}')
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class FlockHistoryViewSet(viewsets.ReadOnlyModelViewSet):
@@ -149,22 +210,25 @@ class FlockHistoryViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
 
         if not queryset.exists():
-            if request.query_params:
-                # If query parameters are provided, but there are no matching flock history records.
-                return Response(
-                    {"detail": "No flock history found matching the provided filters."},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-            else:
-                # If no query parameters are provided, and there are no flock history in the database
-                return Response(
-                    {"detail": "No flock history available."},
-                    status=status.HTTP_200_OK,
-                )
+            return Response([], status=status.HTTP_200_OK)
 
         serializer = self.get_serializer(queryset, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
+        except DRFValidationError as e:
+            return Response({'detail': e.detail}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f'Exception, {str(e)}')
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class FlockMovementViewSet(viewsets.ModelViewSet):
@@ -179,24 +243,25 @@ class FlockMovementViewSet(viewsets.ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
 
         if not queryset.exists():
-            if request.query_params:
-                # If query parameters are provided, but there are no matching flock movement records.
-                return Response(
-                    {
-                        "detail": "No flock movement records found matching the provided filters."
-                    },
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-            else:
-                # If no query parameters are provided, and there are no flock movement records in the database
-                return Response(
-                    {"detail": "No flock movement records available."},
-                    status=status.HTTP_200_OK,
-                )
+            return Response([], status=status.HTTP_200_OK)
 
         serializer = self.get_serializer(queryset, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
+        except DRFValidationError as e:
+            return Response({'detail': e.detail}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f'Exception, {str(e)}')
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class FlockInspectionRecordViewSet(viewsets.ModelViewSet):
@@ -231,30 +296,46 @@ class FlockInspectionRecordViewSet(viewsets.ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
 
         if not queryset.exists():
-            if request.query_params:
-                # If query parameters are provided, but there are no matching flock inspection records.
-                return Response(
-                    {
-                        "detail": "No flock inspection records found matching the provided filters."
-                    },
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-            else:
-                # If no query parameters are provided, and there are no flock inspection records in the database
-                return Response(
-                    {"detail": "No flock inspection records available."},
-                    status=status.HTTP_200_OK,
-                )
+            return Response([], status=status.HTTP_200_OK)
 
         serializer = self.get_serializer(queryset, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def create(self, request, *args, **kwargs):
+        try:
+            print(request.data)
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
+        except DRFValidationError as e:
+            return Response({'detail': str(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f'Exception, {str(e)}')
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class FlockBreedInformationViewSet(viewsets.ModelViewSet):
     queryset = FlockBreedInformation.objects.all()
     serializer_class = FlockBreedInformationSerializer
     permission_classes = [CanActOnFlockBreedInformation]
+
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
+        except DRFValidationError as e:
+            return Response({'detail': str(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f'Exception, {str(e)}')
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class EggCollectionViewSet(viewsets.ModelViewSet):
@@ -284,20 +365,23 @@ class EggCollectionViewSet(viewsets.ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
 
         if not queryset.exists():
-            if request.query_params:
-                # If query parameters are provided, but there are no matching records
-                return Response(
-                    {"detail": "No Egg collection record(s) found matching the provided filters."},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-            else:
-                # If no query parameters are provided, and there are no egg collection records in the database
-                return Response(
-                    {"detail": "No Egg collection records found in the farm yet."},
-                    status=status.HTTP_200_OK,
-                )
+            return Response([], status=status.HTTP_200_OK)
 
         serializer = self.get_serializer(queryset, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
+        except DRFValidationError as e:
+            return Response({'detail': str(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f'Exception, {str(e)}')
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 

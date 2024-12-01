@@ -285,9 +285,8 @@ class FlockBreedInformation(models.Model):
     maturity_age_in_weeks = models.PositiveIntegerField(validators=[MinValueValidator(8), MaxValueValidator(24)])
     
     def clean(self):
-        FlockBreedInformationValidator.validate_fields(self.chicken_type, 
-                                                       self.average_mature_weight_in_kgs, self.maturity_age_in_weeks)
-                                                       
+        FlockBreedInformationValidator.validate_fields(self.chicken_type, self.average_egg_production,
+                                                       self.average_mature_weight_in_kgs, self.maturity_age_in_weeks)                          
 
     def save(self, *args, **kwargs):
         self.clean()

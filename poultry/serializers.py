@@ -107,17 +107,38 @@ class FlockMovementSerializer(serializers.ModelSerializer):
 
     """
 
+    # Use PrimaryKeyRelatedField for accepting IDs during creation
     flock = serializers.PrimaryKeyRelatedField(queryset=Flock.objects.all())
-    from_structure = serializers.PrimaryKeyRelatedField(
-        queryset=HousingStructure.objects.all()
-    )
-    to_structure = serializers.PrimaryKeyRelatedField(
-        queryset=HousingStructure.objects.all()
-    )
+    from_structure = serializers.PrimaryKeyRelatedField(queryset=HousingStructure.objects.all())
+    to_structure = serializers.PrimaryKeyRelatedField(queryset=HousingStructure.objects.all())
+
+    # Use SerializerMethodField for returning names during serialization
+    flock_name = serializers.SerializerMethodField()
+    from_structure_name = serializers.SerializerMethodField()
+    to_structure_name = serializers.SerializerMethodField()
+
+    
 
     class Meta:
         model = FlockMovement
         fields = "__all__"
+        extra_kwargs = {
+            'flock': {'write_only': True},
+            'from_structure': {'write_only': True},
+            'to_structure': {'write_only': True},
+            'flock_name': {'read_only': True},
+            'from_structure_name': {'read_only': True},
+            'to_structure_name': {'read_only': True},
+        }
+    
+    def get_flock_name(self, obj):
+        return obj.flock.name if obj.flock else None
+
+    def get_from_structure_name(self, obj):
+        return obj.from_structure.name if obj.from_structure else None
+
+    def get_to_structure_name(self, obj):
+        return obj.to_structure.name if obj.to_structure else None
 
 
 class FlockInspectionRecordSerializer(serializers.ModelSerializer):
@@ -132,10 +153,14 @@ class FlockInspectionRecordSerializer(serializers.ModelSerializer):
     """
 
     flock = serializers.PrimaryKeyRelatedField(queryset=Flock.objects.all())
+    flock_name = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = FlockInspectionRecord
         fields = "__all__"
+    
+    def get_flock_name(self, obj):
+        return obj.flock.name if obj.flock else None
 
 
 class FlockBreedInformationSerializer(serializers.ModelSerializer):
@@ -153,15 +178,23 @@ class FlockBreedInformationSerializer(serializers.ModelSerializer):
     """
 
     breed = serializers.PrimaryKeyRelatedField(queryset=FlockBreed.objects.all())
+    breed_name = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = FlockBreedInformation
         fields = "__all__"
+    
+    def get_breed_name(self, obj):
+        return obj.breed.name if obj.breed else None
 
 
 class EggCollectionSerializer(serializers.ModelSerializer):
     flock = serializers.PrimaryKeyRelatedField(queryset=Flock.objects.all())
+    flock_name = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = EggCollection
         fields = "__all__"
+    
+    def get_flock_name(self, obj):
+        return obj.flock.name if obj.flock else None

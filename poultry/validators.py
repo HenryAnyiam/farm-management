@@ -300,7 +300,7 @@ class FlockBreedInformationValidator:
     ):
         if (
             chicken_type == ChickenTypeChoices.BROILER
-            and average_egg_production is not None
+            and average_egg_production > 0
         ):
             raise ValidationError("Broilers should not have egg production!.")
 
