@@ -37,6 +37,8 @@ class StaffView(APIView):
         serialized = UserRegisterSerializer(data=user_data)
         if serialized.is_valid():
             serialized.save()
+            request.user.last_activity = f"Created new staff: {request.data.get('username')}"
+            request.user.save()
             return Response({'message': 'Staff created successfully'}, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])

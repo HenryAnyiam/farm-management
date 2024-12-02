@@ -43,6 +43,8 @@ class FarmDataCreateView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(CustomUser=self.request.user)
+        self.request.user.last_activity = "Added new farm data"
+        self.request.user.save()
 
 # List Farm Data for reports
 class FarmDataListView(generics.ListAPIView):

@@ -21,7 +21,6 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             'password': {'write_only': True},
             'last_activity': {'read_only': True},
             'organization': {'write_only': True},
-            'role': {'write_only': True},
             'users_role': {'read_only': True},
         }
         
@@ -61,7 +60,8 @@ class LoginSerializer(serializers.ModelSerializer):
         return {
             'id': user.id,
             'username':user.username,
-            'role': user.users_role,
+            'role': user.role,
+            'users_role': user.users_role,
             'token': token,
         }
 

@@ -51,7 +51,8 @@ class FlockSourceViewSet(viewsets.ModelViewSet):
         try:
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            self.request.user.last_activity = "Added new flock source"
+            self.request.user.save()
             return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
         except ValidationError as e:
             return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
@@ -101,6 +102,8 @@ class FlockBreedViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            self.request.user.last_activity = "Added new flock breed"
+            self.request.user.save()
             return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
         except ValidationError as e:
             return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
@@ -134,6 +137,8 @@ class HousingStructureViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            self.request.user.last_activity = "Added new housing structure"
+            self.request.user.save()
             return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
         except ValidationError as e:
             return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
@@ -187,6 +192,8 @@ class FlockViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            self.request.user.last_activity = "Added new flock"
+            self.request.user.save()
             return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
         except ValidationError as e:
             return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
@@ -221,6 +228,8 @@ class FlockHistoryViewSet(viewsets.ReadOnlyModelViewSet):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            self.request.user.last_activity = "Added new flock history"
+            self.request.user.save()
             return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
         except ValidationError as e:
             return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
@@ -254,6 +263,8 @@ class FlockMovementViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            self.request.user.last_activity = "Recorded new flock movement"
+            self.request.user.save()
             return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
         except ValidationError as e:
             return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
@@ -308,6 +319,8 @@ class FlockInspectionRecordViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            self.request.user.last_activity = "Record new flock inspection"
+            self.request.user.save()
             return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
         except ValidationError as e:
             return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
@@ -328,6 +341,8 @@ class FlockBreedInformationViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            self.request.user.last_activity = "Added new flock breed information"
+            self.request.user.save()
             return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
         except ValidationError as e:
             return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
@@ -376,6 +391,8 @@ class EggCollectionViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            self.request.user.last_activity = "Added new egg collection"
+            self.request.user.save()
             return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
         except ValidationError as e:
             return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)

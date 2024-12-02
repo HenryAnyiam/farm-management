@@ -85,15 +85,22 @@ class FlockSerializer(serializers.ModelSerializer):
 
 
 class FlockHistorySerializer(serializers.ModelSerializer):
+
+    flock = serializers.PrimaryKeyRelatedField(queryset=Flock.objects.all())
+    current_housing_structure = serializers.PrimaryKeyRelatedField(queryset=HousingStructure.objects.all())
+
+    flock_name = serializers.SerializerMethodField(read_only=True)
+    housing_structure_name = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = FlockHistory
         fields = "__all__"
-        read_only_fields = (
-            "flock",
-            "rearing_method",
-            "current_housing_structure",
-            "date_changed",
-        )
+    
+    def get_flock_name(self, obj):
+        return obj.flock.name if obj.flock else None
+
+    def get_housing_structure_name(self, obj):
+        return obj.current_housing_structure.name if obj.current_housing_structure else None
 
 
 class FlockMovementSerializer(serializers.ModelSerializer):
