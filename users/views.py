@@ -60,7 +60,8 @@ def auth_user(request):
                 'token': token,
                 'id': user.id,
                 'username':user.username,
-                'role': user.users_role,
+                'role': user.role,
+                'users_role': user.users_role,
             }, status=status.HTTP_200_OK)
 
         return Response({"message": f"Incorrect Password"},

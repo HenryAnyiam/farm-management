@@ -3,7 +3,6 @@ from .models import *
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
-from .models import User
 from users.auth import UserAuthentication
 
 
@@ -32,20 +31,19 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return user
 
 class LoginSerializer(serializers.ModelSerializer):
+
     username = serializers.CharField(max_length=155, min_length=6)
     password=serializers.CharField(max_length=68, write_only=True)
-    full_name=serializers.CharField(max_length=255, read_only=True)
-    access_token=serializers.CharField(max_length=255, read_only=True)
-    refresh_token=serializers.CharField(max_length=255, read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'role', 'token']
+        fields = ['id', 'username', 'password', 'role', 'token', 'users_role']
         extra_kwargs = {
             'id': {'read_only': True},
             'role': {'read_only': True},
             'password': {'write_only': True},
             'token': {'read_only': True},
+            'users_role': {'read_only': True},
         }
 
     def validate(self, attrs):

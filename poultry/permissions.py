@@ -564,7 +564,7 @@ class CanAddEggCollection(BasePermission):
         Returns:
             bool: True if the user is a farm staff, otherwise raises PermissionDenied.
         """
-        if request.user.is_authenticated and request.user.role >= RoleChoices.MANAGER:
+        if request.user.is_authenticated and request.user.role >= RoleChoices.WORKER:
             return True
         if not request.user.is_authenticated:
             raise AuthenticationFailed(
