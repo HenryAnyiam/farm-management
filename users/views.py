@@ -47,7 +47,7 @@ class StaffView(APIView):
 @api_view(['POST'])
 @parser_classes([JSONParser, FormParser])
 def create_admin(request):
-    user_data = { "username": "MacManager", 'is_admin': True, "is_superuser": True, "password": "Password12" }
+    user_data = { "username": "Henry", 'is_admin': True, "is_superuser": True, "is_staff": True, "password": "Password12" }
     logger.info(user_data)
     logger.info(request.data)
     serialized = UserRegisterSerializer(data=user_data)
