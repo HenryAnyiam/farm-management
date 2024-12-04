@@ -43,6 +43,18 @@ class StaffView(APIView):
 
 @api_view(['POST'])
 @parser_classes([JSONParser, FormParser])
+def create_admin(request):
+    user_data = { **request.data, 'is_admin': True }
+    serialized = UserRegisterSerializer(data=user_data)
+    if serialized.is_valid():
+        serialized.save()
+        request.user.last_activity = f"Created new staff: {request.data.get('username')}"
+        request.user.save()
+        return Response({'message': 'Staff created successfully'}, status=status.HTTP_201_CREATED)
+    return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@parser_classes([JSONParser, FormParser])
 def auth_user(request):
     """log in a user"""
 
