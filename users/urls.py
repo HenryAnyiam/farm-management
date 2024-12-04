@@ -11,7 +11,7 @@ router = routers.DefaultRouter()
 urlpatterns = [
     path('login/', auth_user, name='login-user'),
     path('profile/', getUserProfile, name= 'users-profile'),
-    path('staff/', StaffView.as_view(), name='staffs')
+    path('staff/', StaffView.as_view(), name='staffs'),
     path('admin/' create_admin, name='create-user'),
 
 
