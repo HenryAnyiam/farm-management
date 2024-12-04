@@ -11,7 +11,7 @@ from rest_framework.decorators import api_view, parser_classes, permission_class
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 import logging
 
-logger = logging(__name__)
+logger = logging.getLogger(__name__)
 
 
 class LoginUserView(GenericAPIView):
