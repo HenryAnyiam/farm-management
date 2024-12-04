@@ -9,6 +9,9 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, parser_classes, permission_classes
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+import logging
+
+logger = logging(__name__)
 
 
 class LoginUserView(GenericAPIView):
@@ -45,6 +48,8 @@ class StaffView(APIView):
 @parser_classes([JSONParser, FormParser])
 def create_admin(request):
     user_data = { **request.data, 'is_admin': True }
+    logger.info(user_data)
+    logger.info(request.data)
     serialized = UserRegisterSerializer(data=user_data)
     if serialized.is_valid():
         serialized.save()
