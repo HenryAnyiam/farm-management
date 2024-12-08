@@ -35,7 +35,10 @@ class FlockSourceViewSet(viewsets.ModelViewSet):
 
 
     def update(self, request, *args, **kwargs):
-        raise MethodNotAllowed("PUT")
+        return Response(
+            {"detail": "Updates are not allowed!."},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -51,6 +54,7 @@ class FlockSourceViewSet(viewsets.ModelViewSet):
         try:
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
+            serializer.save()
             self.request.user.last_activity = "Added new flock source"
             self.request.user.save()
             return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
@@ -85,7 +89,10 @@ class FlockBreedViewSet(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
     def update(self, request, *args, **kwargs):
-        raise MethodNotAllowed("PUT")
+        return Response(
+            {"detail": "Updates are not allowed!."},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -176,7 +183,10 @@ class FlockViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def update(self, request, *args, **kwargs):
-        raise MethodNotAllowed("PUT")
+        return Response(
+            {"detail": "Updates are not allowed!."},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())

@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, parser_classes, permission_classes
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 import logging
+from uuid import UUID
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +44,40 @@ class StaffView(APIView):
             request.user.last_activity = f"Created new staff: {request.data.get('username')}"
             request.user.save()
             return Response({'message': 'Staff created successfully'}, status=status.HTTP_201_CREATED)
+    
+    def put(self, request, staff_id=None):
+        """edit staff details"""
+        if not staff_id:
+            return Response({'detail': 'Staff Id not included'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            UUID(staff_id)
+            staff = User.objects.get(id=staff_id, organization=request.user.organization)
+            serializer = UserRegisterSerializer(staff, data=request.data, partial=True)
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message': 'User updated Successfully'}, status=status.HTTP_200_OK)
+        except ValueError:
+            return Response({'detail': 'Invalid Staff ID'}, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return Response({'detail': 'User Not Found'}, status=status.HTTP_404_NOT_FOUND)
+        
+    def delete(self, request, staff_id=None):
+        """delete staff details"""
+
+        if not staff_id:
+            return Response({'detail': 'Staff Id not included'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            UUID(staff_id)
+            staff = User.objects.get(id=staff_id, organization=request.user.organization)
+            staff.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except ValueError:
+            return Response({'detail': 'Invalid Staff ID'}, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return Response({'detail': 'User Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
 @parser_classes([JSONParser, FormParser])

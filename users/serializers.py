@@ -14,7 +14,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'email', 'username', 'password',
                   'organization', 'role', 'last_activity',
-                  'users_role', 'is_admin', "is_superuser", "is_staff"]
+                  'users_role']
         extra_kwargs = {
             'id': {'read_only': True},
             'password': {'write_only': True},
@@ -29,6 +29,23 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+    
+    def update(self, instance, validated_data):
+        """
+        Handle user updates. Update fields selectively while preserving existing data.
+        """
+
+        for attr, value in validated_data.items():
+            if attr == 'password':
+                continue 
+            setattr(instance, attr, value)
+
+        password = validated_data.get('password', None)
+        if password:
+            instance.set_password(password)
+
+        instance.save()
+        return instance
 
 class LoginSerializer(serializers.ModelSerializer):
 
