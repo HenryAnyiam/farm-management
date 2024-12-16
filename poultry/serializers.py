@@ -62,6 +62,9 @@ class FlockSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         flock_source_data = validated_data.pop("source")
         flock_breed_data = validated_data.pop("breed")
+        organization = validated_data.get("organization")
+        flock_source_data['organization'] = organization
+        flock_breed_data['organization'] = organization
         source, _ = FlockSource.objects.get_or_create(**flock_source_data)
         breed, _ = FlockBreed.objects.get_or_create(**flock_breed_data)
         flock = Flock.objects.create(breed=breed, source=source, **validated_data)

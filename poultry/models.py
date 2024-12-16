@@ -24,7 +24,7 @@ class FlockSource(models.Model):
                                      related_name='sources', null=True)
 
     def clean(self):
-        FlockSourceValidator.validate_source(self.name)
+        FlockSourceValidator.validate_source(self.name, self.organization)
 
     def save(self, *args, **kwargs):
         """
@@ -51,7 +51,7 @@ class FlockBreed(models.Model):
         return self.name
 
     def clean(self):
-        FlockBreedValidator.validate_breed_name(self.name)
+        FlockBreedValidator.validate_breed_name(self.name, self.organization)
 
     def save(self, *args, **kwargs):
         """

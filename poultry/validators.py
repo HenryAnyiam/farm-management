@@ -11,25 +11,25 @@ from poultry.utils import todays_date
 
 class FlockSourceValidator:
     @staticmethod
-    def validate_source(name):
+    def validate_source(name, organization):
         from poultry.models import FlockSource
 
         if name not in FlockSourceChoices.values:
             raise ValidationError(f"Invalid flock source: '{name}'.")
 
-        if FlockSource.objects.filter(name=name).exists():
+        if FlockSource.objects.filter(name=name, organization=organization).exists():
             raise ValidationError(f"This flock source '{name}' already exists.")
 
 
 class FlockBreedValidator:
     @staticmethod
-    def validate_breed_name(name):
+    def validate_breed_name(name, organization):
         from poultry.models import FlockBreed
 
         if name not in FlockBreedTypeChoices.values:
             raise ValidationError(f"Invalid flock breed: '{name}'.")
 
-        if FlockBreed.objects.filter(name=name).exists():
+        if FlockBreed.objects.filter(name=name, organization=organization).exists():
             raise ValidationError(f"This flock breed '{name}' already exists.")
 
 
