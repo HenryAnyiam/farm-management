@@ -5,6 +5,7 @@ from django.utils import timezone
 
 from poultry.utils import todays_date
 from poultry.validators import *
+from users.models import Organization
 
 #9
 class FlockSource(models.Model):
@@ -19,6 +20,8 @@ class FlockSource(models.Model):
     """
 
     name = models.CharField(max_length=13, choices=FlockSourceChoices.choices)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE,
+                                     related_name='sources', null=True)
 
     def clean(self):
         FlockSourceValidator.validate_source(self.name)
@@ -41,6 +44,8 @@ class FlockBreed(models.Model):
     """
 
     name = models.CharField(max_length=20, choices=FlockBreedTypeChoices.choices)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE,
+                                     related_name='breeds', null=True)
 
     def __str__(self):
         return self.name
@@ -86,6 +91,8 @@ class HousingStructure(models.Model):
         max_length=21, choices=HousingStructureCategoryChoices.choices
     )
     name = models.CharField(max_length=50)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE,
+                                     related_name='structures', null=True)
 
     def __str__(self):
         """
@@ -154,6 +161,8 @@ class Flock(models.Model):
     date_established = models.DateField(auto_now_add=True)
     is_present = models.BooleanField(default=True, editable=False)
     name = models.CharField(max_length=50)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE,
+                                     related_name='flocks', null=True)
 
     @property
     def age_in_weeks(self):
@@ -221,6 +230,8 @@ class FlockHistory(models.Model):
         HousingStructure, on_delete=models.CASCADE
     )
     date_changed = models.DateTimeField(auto_now_add=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE,
+                                     related_name='flock_histories', null=True)
 
     def __str__(self):
         return f"History for {self.flock}"
@@ -231,6 +242,8 @@ class FlockMovement(models.Model):
     from_structure = models.ForeignKey(HousingStructure, on_delete=models.CASCADE, related_name='outgoing_movements')
     to_structure = models.ForeignKey(HousingStructure, on_delete=models.CASCADE, related_name='incoming_movements')
     movement_date = models.DateField(auto_now_add=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE,
+                                     related_name='flock_movements', null=True)
 
     def clean(self):
         FlockMovementValidator.validate_flock_movement(self.flock, self.to_structure, self.from_structure)
@@ -247,6 +260,8 @@ class FlockInspectionRecord(models.Model):
     flock = models.ForeignKey(Flock, on_delete=models.CASCADE)
     date_of_inspection = models.DateTimeField(auto_now_add=True)
     number_of_dead_birds = models.PositiveIntegerField(default=0)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE,
+                                     related_name='inspections', null=True)
 
     def __str__(self):
         return f"{self.flock} Inspection Report on: {self.date_of_inspection}"
@@ -283,6 +298,8 @@ class FlockBreedInformation(models.Model):
     average_mature_weight_in_kgs = models.DecimalField(max_digits=3, decimal_places=2)
     average_egg_production = models.PositiveIntegerField(blank =True, null=True)
     maturity_age_in_weeks = models.PositiveIntegerField(validators=[MinValueValidator(8), MaxValueValidator(24)])
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE,
+                                     related_name='breed_information', null=True)
     
     def clean(self):
         FlockBreedInformationValidator.validate_fields(self.chicken_type, self.average_egg_production,
@@ -299,6 +316,8 @@ class EggCollection(models.Model):
     time_of_collection = models.TimeField(auto_now_add=True)
     collected_eggs = models.PositiveIntegerField(default=0)
     broken_eggs = models.PositiveIntegerField(default=0)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE,
+                                     related_name='egg_collections', null=True)
 
     @property
     def picking_time(self):

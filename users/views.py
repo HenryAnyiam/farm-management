@@ -44,6 +44,7 @@ class StaffView(APIView):
             request.user.last_activity = f"Created new staff: {request.data.get('username')}"
             request.user.save()
             return Response({'message': 'Staff created successfully'}, status=status.HTTP_201_CREATED)
+        return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def put(self, request, staff_id=None):
         """edit staff details"""

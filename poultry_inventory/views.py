@@ -42,7 +42,7 @@ class FarmDataCreateView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(CustomUser=self.request.user)
+        serializer.save(organization=self.request.user.organization)
         self.request.user.last_activity = "Added new farm data"
         self.request.user.save()
 
@@ -55,5 +55,5 @@ class FarmDataListView(generics.ListAPIView):
     def get_queryset(self):
         # Filter the farm data based on the authenticated user
         user = self.request.user
-        return FarmData.objects.filter(CustomUser = user)
+        return FarmData.objects.filter(organization=user.organization)
        

@@ -20,6 +20,10 @@ class FlockSourceViewSet(viewsets.ModelViewSet):
     filterset_class = FlockSourceFilterSet
     ordering_fields = ["name"]
 
+    def get_queryset(self):
+        user = self.request.user
+        return FlockSource.objects.filter(organization=user.organization)
+
     def get_permissions(self):
         if self.action in ["create"]:
             # Only farm owner and farm manager should be allowed to create flock sources
@@ -52,7 +56,7 @@ class FlockSourceViewSet(viewsets.ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         try:
-            serializer = self.get_serializer(data=request.data)
+            serializer = self.get_serializer(data={**request.data, 'organization': request.user.organization.id})
             serializer.is_valid(raise_exception=True)
             serializer.save()
             self.request.user.last_activity = "Added new flock source"
@@ -73,6 +77,10 @@ class FlockBreedViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = FlockBreedFilterSet
     ordering_fields = ["name"]
+
+    def get_queryset(self):
+        user = self.request.user
+        return FlockBreed.objects.filter(organization=user.organization)
 
     def get_permissions(self):
         if self.action in ["create"]:
@@ -106,7 +114,7 @@ class FlockBreedViewSet(viewsets.ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         try:
-            serializer = self.get_serializer(data=request.data)
+            serializer = self.get_serializer(data={**request.data, 'organization': request.user.organization.id})
             serializer.is_valid(raise_exception=True)
             serializer.save()
             self.request.user.last_activity = "Added new flock breed"
@@ -129,6 +137,10 @@ class HousingStructureViewSet(viewsets.ModelViewSet):
     ordering_fields = ["house_type", "category"]
     permission_classes = [CanActOnHousingStructure]
 
+    def get_queryset(self):
+        user = self.request.user
+        return HousingStructure.objects.filter(organization=user.organization)
+
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
 
@@ -141,7 +153,7 @@ class HousingStructureViewSet(viewsets.ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         try:
-            serializer = self.get_serializer(data=request.data)
+            serializer = self.get_serializer(data={**request.data, 'organization': request.user.organization.id})
             serializer.is_valid(raise_exception=True)
             serializer.save()
             self.request.user.last_activity = "Added new housing structure"
@@ -162,6 +174,10 @@ class FlockViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = FlockFilterSet
     ordering_fields = ["-date_established", "source"]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Flock.objects.filter(organization=user.organization)
 
     def get_permissions(self):
         if self.action in ["create"]:
@@ -199,7 +215,7 @@ class FlockViewSet(viewsets.ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         try:
-            serializer = self.get_serializer(data=request.data)
+            serializer = self.get_serializer(data={**request.data, 'organization': request.user.organization.id})
             serializer.is_valid(raise_exception=True)
             serializer.save()
             self.request.user.last_activity = "Added new flock"
@@ -223,6 +239,10 @@ class FlockHistoryViewSet(viewsets.ReadOnlyModelViewSet):
     ordering_fields = ["-date_changed", "flock", "rearing_method"]
     permission_classes = [CanActOnFlockHistory]
 
+    def get_queryset(self):
+        user = self.request.user
+        return FlockHistory.objects.filter(organization=user.organization)
+
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
 
@@ -235,7 +255,7 @@ class FlockHistoryViewSet(viewsets.ReadOnlyModelViewSet):
     
     def create(self, request, *args, **kwargs):
         try:
-            serializer = self.get_serializer(data=request.data)
+            serializer = self.get_serializer(data={**request.data, 'organization': request.user.organization.id})
             serializer.is_valid(raise_exception=True)
             serializer.save()
             self.request.user.last_activity = "Added new flock history"
@@ -258,6 +278,10 @@ class FlockMovementViewSet(viewsets.ModelViewSet):
     ordering_fields = ["-movement_date", "flock"]
     permission_classes = [CanActOnFlockMovement]
 
+    def get_queryset(self):
+        user = self.request.user
+        return FlockMovement.objects.filter(organization=user.organization)
+
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
 
@@ -270,7 +294,7 @@ class FlockMovementViewSet(viewsets.ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         try:
-            serializer = self.get_serializer(data=request.data)
+            serializer = self.get_serializer(data={**request.data, 'organization': request.user.organization.id})
             serializer.is_valid(raise_exception=True)
             serializer.save()
             self.request.user.last_activity = "Recorded new flock movement"
@@ -291,6 +315,10 @@ class FlockInspectionRecordViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = FlockInspectionRecordFilterSet
     ordering_fields = ["-date_of_inspection", "flock"]
+
+    def get_queryset(self):
+        user = self.request.user
+        return FlockInspectionRecord.objects.filter(organization=user.organization)
 
     def get_permissions(self):
         if self.action in ["destroy"]:
@@ -325,8 +353,7 @@ class FlockInspectionRecordViewSet(viewsets.ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         try:
-            print(request.data)
-            serializer = self.get_serializer(data=request.data)
+            serializer = self.get_serializer(data={**request.data, 'organization': request.user.organization.id})
             serializer.is_valid(raise_exception=True)
             serializer.save()
             self.request.user.last_activity = "Record new flock inspection"
@@ -346,9 +373,13 @@ class FlockBreedInformationViewSet(viewsets.ModelViewSet):
     serializer_class = FlockBreedInformationSerializer
     permission_classes = [CanActOnFlockBreedInformation]
 
+    def get_queryset(self):
+        user = self.request.user
+        return FlockBreedInformation.objects.filter(organization=user.organization)
+
     def create(self, request, *args, **kwargs):
         try:
-            serializer = self.get_serializer(data=request.data)
+            serializer = self.get_serializer(data={**request.data, 'organization': request.user.organization.id})
             serializer.is_valid(raise_exception=True)
             serializer.save()
             self.request.user.last_activity = "Added new flock breed information"
@@ -369,6 +400,10 @@ class EggCollectionViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = EggCollectionFilterSet
     ordering_fields = ["-date_of_collection", "-time_of_collection", "flock"]
+
+    def get_queryset(self):
+        user = self.request.user
+        return EggCollection.objects.filter(organization=user.organization)
 
     def get_permissions(self):
         if self.action in ["create"]:
@@ -398,7 +433,7 @@ class EggCollectionViewSet(viewsets.ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         try:
-            serializer = self.get_serializer(data=request.data)
+            serializer = self.get_serializer(data={**request.data, 'organization': request.user.organization.id})
             serializer.is_valid(raise_exception=True)
             serializer.save()
             self.request.user.last_activity = "Added new egg collection"
