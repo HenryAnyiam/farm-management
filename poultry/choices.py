@@ -30,6 +30,57 @@ class ChickenTypeChoices(models.TextChoices):
     LAYERS = 'Layers'
     MULTI_PURPOSE = 'Multi-Purpose'
 
+class FeedTypeChoices(models.TextChoices):
+    """
+    Choices for feed types
+    """
+
+    CRUMB = "Crumb/Pellet"
+    MASH = "Mash"
+
+
+class GrowthStageChoices(models.TextChoices):
+    """
+    Choices for growth stage
+    """
+    
+    STARTER = "Starter"
+    GROWERS = "Growers"
+    FINISHER = "Finisher"
+    EARLYLAYING = "Early Laying"
+    MAINLAYING = "Main Laying"
+
+
+class TreatmentTypeChoices(models.TextChoices):
+    """
+    Choices for flock treatment type
+    """
+
+    MEDICATION = "Medication"
+    VACCINATION = "Vaccination"
+    SUPPLEMENTS = "Supplements"
+
+
+class TreatmentMethodChoices(models.TextChoices):
+    """
+    Choices for flock treatment method
+    """
+
+    INTRAMUSCULAR = "Intramuscular"
+    ORAL = "Oral"
+    SUBCUTANEOUS = "Subcutaneous"
+    TOPICAL = "Topical"
+    OTHERS = "Others"
+
+
+class FinanceCategoryChoices(models.TextChoices):
+    """
+    Choice to identify finance type
+    """
+
+    EXPENSE = "Expense"
+    REVENUE = "Revenue"
+
 
 class HousingStructureTypeChoices(models.TextChoices):
     """

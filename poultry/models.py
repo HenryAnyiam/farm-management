@@ -156,6 +156,8 @@ class Flock(models.Model):
     date_of_hatching = models.DateField()
     chicken_type = models.CharField(max_length=15, choices=ChickenTypeChoices.choices)
     initial_number_of_birds = models.PositiveIntegerField(validators=[MinValueValidator(2)])
+    unit_prices = models.PositiveIntegerField()
+    initial_weight = models.PositiveIntegerField()
     current_rearing_method = models.CharField(max_length=50, choices=RearingMethodChoices.choices)
     current_housing_structure = models.ForeignKey(HousingStructure, on_delete=models.PROTECT, related_name="flocks")
     date_established = models.DateField(auto_now_add=True)
@@ -258,10 +260,11 @@ class FlockMovement(models.Model):
 #3
 class FlockInspectionRecord(models.Model):
     flock = models.ForeignKey(Flock, on_delete=models.CASCADE)
-    date_of_inspection = models.DateTimeField(auto_now_add=True)
+    date_of_inspection = models.DateField()
     number_of_dead_birds = models.PositiveIntegerField(default=0)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE,
                                      related_name='inspections', null=True)
+    date_recorded = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.flock} Inspection Report on: {self.date_of_inspection}"
@@ -345,3 +348,81 @@ class EggCollection(models.Model):
         self.clean()
         super().save(*args, **kwargs)
 
+class FeedPurchase(models.Model):
+
+    name = models.CharField(max_length=250)
+    variety = models.CharField(max_length=250)
+    form = models.CharField(max_length=20, choices=FeedTypeChoices.choices)
+    chicken_type = models.CharField(max_length=15, choices=ChickenTypeChoices.choices)
+    growth_stage = models.CharField(max_length=20, choices=GrowthStageChoices.choices)
+    unit_price = models.DecimalField(max_digits=20, decimal_places=2)
+    size_of_bags = models.PositiveIntegerField()
+    purchase_date = models.DateField()
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE,
+                                     related_name='feeds', null=True)
+    date_recorded = models.DateTimeField(auto_now_add=True)
+
+
+class Feeding(models.Model):
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE,
+                                     related_name='feeding', null=True)
+    feed_weight = models.FloatField()
+    feed = models.ForeignKey(FeedPurchase, on_delete=models.PROTECT, related_name='feeding')
+    water_qty = models.FloatField()
+    flock = models.ForeignKey(Flock, on_delete=models.CASCADE, related_name='feeding')
+    notes = models.TextField(null=True)
+    feed_date = models.DateField()
+    feed_time = models.TimeField()
+    date_recorded = models.DateTimeField(auto_now_add=True)
+
+
+class Treatment(models.Model):
+
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE,
+                                     related_name='treatment', null=True)
+    flock = models.ForeignKey(Flock, on_delete=models.CASCADE, related_name='treatment')
+    treatment_type = models.CharField(max_length=20, choices=TreatmentTypeChoices.choices)
+    details = models.CharField(max_length=250)
+    dosage = models.CharField(max_length=250)
+    associated_cost = models.DecimalField(max_digits=20, decimal_places=2)
+    treatment_method = models.CharField(max_length=20, choices=TreatmentMethodChoices.choices)
+    birds_treated = models.PositiveIntegerField()
+    veterinarian = models.CharField(max_length=250)
+    notes = models.TextField(null=True)
+    date_administered = models.DateField()
+    time_administered = models.TimeField()
+    date_recorded = models.DateTimeField(auto_now_add=True)
+
+
+class FlockWeight(models.Model):
+
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE,
+                                     related_name='weight', null=True)
+    flock = models.ForeignKey(Flock, on_delete=models.CASCADE, related_name='weight')
+    weight = models.DecimalField(max_digits=3, decimal_places=2,
+                                 validators=[MinValueValidator(0.1), MaxValueValidator(5)])
+    date_weighed = models.DateField()
+    date_recorded = models.DateTimeField(auto_now_add=True)
+
+
+class EggSales(models.Model):
+
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE,
+                                     related_name='egg_sales', null=True)
+    no_of_crates = models.PositiveIntegerField()
+    unit_price = models.DecimalField(max_digits=20, decimal_places=2)
+    date_sold = models.DateField()
+    date_recorded = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(null=True)
+
+
+class Finance(models.Model):
+
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE,
+                                     related_name='finance', null=True)
+    category = models.CharField(max_length=10, choices=FinanceCategoryChoices.choices)
+    finance_type = models.CharField(max_length=50)
+    amount = models.DecimalField(max_digits=20, decimal_places=2)
+    date_occurred = models.DateField()
+    beneficiary = models.CharField(max_length=250)
+    description = models.TextField(null=True)
