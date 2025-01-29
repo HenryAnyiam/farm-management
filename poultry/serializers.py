@@ -105,6 +105,65 @@ class FlockHistorySerializer(serializers.ModelSerializer):
     def get_housing_structure_name(self, obj):
         return obj.current_housing_structure.name if obj.current_housing_structure else None
 
+class FeedPurchaseSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = FeedPurchase
+        fields = "__all__"
+
+
+class EggSalesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = EggSales
+        fields = "__all__"
+
+
+class FinanceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Finance
+        fields = "__all__"
+
+
+class FeedingSerializer(serializers.ModelSerializer):
+
+    flock = serializers.PrimaryKeyRelatedField(queryset=Flock.objects.all())
+    flock_name = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Feeding
+        fields = "__all__"
+    
+    def get_flock_name(self, obj):
+        return obj.flock.name if obj.flock else None
+
+
+class TreatmentSerializer(serializers.ModelSerializer):
+
+    flock = serializers.PrimaryKeyRelatedField(queryset=Flock.objects.all())
+    flock_name = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Treatment
+        fields = "__all__"
+    
+    def get_flock_name(self, obj):
+        return obj.flock.name if obj.flock else None
+
+
+class FlockWeightSerializer(serializers.ModelSerializer):
+
+    flock = serializers.PrimaryKeyRelatedField(queryset=Flock.objects.all())
+    flock_name = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = FlockWeight
+        fields = "__all__"
+    
+    def get_flock_name(self, obj):
+        return obj.flock.name if obj.flock else None
+
 
 class FlockMovementSerializer(serializers.ModelSerializer):
     """

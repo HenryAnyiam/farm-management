@@ -73,6 +73,186 @@ class FlockFilterSet(filters.FilterSet):
         ]
 
 
+class FeedPurchaseFilterSet(filters.FilterSet):
+    name = filters.CharFilter(lookup_expr="icontains")
+    variety = filters.CharFilter(lookup_expr="icontains")
+    form = filters.CharFilter(lookup_expr="icontains")
+    chicken_type = filters.CharFilter(lookup_expr="icontains")
+    growth_stage = filters.CharFilter(lookup_expr="icontains")
+    purchase_date = filters.DateFilter(
+        field_name="purchase_date", lookup_expr="exact"
+    )
+    year_purchased = filters.NumberFilter(
+        field_name="purchase_date__year", lookup_expr="exact"
+    )
+    month_purchased = filters.NumberFilter(
+        field_name="purchase_date__month", lookup_expr="exact"
+    )
+    week_purchased = filters.NumberFilter(
+        field_name="purchase_date__week", lookup_expr="exact"
+    )
+    day_purchased = filters.NumberFilter(
+        field_name="purchase_date__day", lookup_expr="exact"
+    )
+
+    class Meta:
+        model = FeedPurchase
+        fields = [
+            "name",
+            "variety",
+            "form",
+            "chicken_type",
+            "growth_stage",
+            "purchase_date",
+            "year_purchased",
+            "month_purchased",
+            "week_purchased",
+            "day_purchased",
+        ]
+
+class FeedingFilterSet(filters.FilterSet):
+    feed = filters.CharFilter(lookup_expr="icontains")
+    flock = filters.CharFilter(lookup_expr="icontains")
+    feed_date = filters.DateFilter(
+        field_name="feed_date", lookup_expr="exact"
+    )
+    year_fed = filters.NumberFilter(
+        field_name="feed_date__year", lookup_expr="exact"
+    )
+    month_fed = filters.NumberFilter(
+        field_name="feed_date__month", lookup_expr="exact"
+    )
+    week_fed = filters.NumberFilter(
+        field_name="feed_date__week", lookup_expr="exact"
+    )
+    day_fed = filters.NumberFilter(
+        field_name="feed_date__day", lookup_expr="exact"
+    )
+
+    class Meta:
+        model = Feeding
+        fields = [
+            "feed",
+            "flock",
+            "feed_date",
+            "year_fed",
+            "month_fed",
+            "week_fed",
+            "day_fed",
+        ]
+
+
+class TreatmentFilterSet(filters.FilterSet):
+    flock = filters.CharFilter(lookup_expr="icontains")
+    treatment_type = filters.CharFilter(lookup_expr="icontains")
+    treatment_method = filters.CharFilter(lookup_expr="icontains")
+    veterinarian = filters.CharFilter(lookup_expr="icontains")
+    date_administered = filters.DateFilter(
+        field_name="date_administered", lookup_expr="exact"
+    )
+    year_administered = filters.NumberFilter(
+        field_name="date_administered__year", lookup_expr="exact"
+    )
+    month_administered = filters.NumberFilter(
+        field_name="date_administered__month", lookup_expr="exact"
+    )
+    week_administered = filters.NumberFilter(
+        field_name="date_administered__week", lookup_expr="exact"
+    )
+    day_administered = filters.NumberFilter(
+        field_name="date_administered__day", lookup_expr="exact"
+    )
+
+    class Meta:
+        model = Treatment
+        fields = [
+            "flock",
+            "treatment_type",
+            "treatment_method",
+            "veterinarian",
+            "chicken_type",
+            "growth_stage",
+            "date_administered",
+            "is_present",
+            "year_administered",
+            "month_administered",
+            "week_administered",
+            "day_administered",
+        ]
+
+
+class EggSalesFilterSet(filters.FilterSet):
+    date_sold = filters.DateFilter(
+        field_name="date_sold", lookup_expr="exact"
+    )
+    year_sold = filters.NumberFilter(
+        field_name="date_sold__year", lookup_expr="exact"
+    )
+    month_sold = filters.NumberFilter(
+        field_name="date_sold__month", lookup_expr="exact"
+    )
+    week_sold = filters.NumberFilter(
+        field_name="date_sold__week", lookup_expr="exact"
+    )
+    day_sold = filters.NumberFilter(
+        field_name="date_sold__day", lookup_expr="exact"
+    )
+
+    class Meta:
+        model = EggSales
+        fields = [
+            "flock",
+            "treatment_type",
+            "treatment_method",
+            "veterinarian",
+            "chicken_type",
+            "growth_stage",
+            "date_sold",
+            "is_present",
+            "year_sold",
+            "month_sold",
+            "week_sold",
+            "day_sold",
+        ]
+
+
+class FinanceFilterSet(filters.FilterSet):
+    category = filters.CharFilter(lookup_expr="icontains")
+    finance_type = filters.CharFilter(lookup_expr="icontains")
+    beneficiary = filters.CharFilter(lookup_expr="icontains")
+    date_occurred = filters.DateFilter(
+        field_name="date_occurred", lookup_expr="exact"
+    )
+    year_occurred = filters.NumberFilter(
+        field_name="date_occurred__year", lookup_expr="exact"
+    )
+    month_occurred = filters.NumberFilter(
+        field_name="date_occurred__month", lookup_expr="exact"
+    )
+    week_occurred = filters.NumberFilter(
+        field_name="date_occurred__week", lookup_expr="exact"
+    )
+    day_occurred = filters.NumberFilter(
+        field_name="date_occurred__day", lookup_expr="exact"
+    )
+
+    class Meta:
+        model = Finance
+        fields = [
+            "category",
+            "finance_type",
+            "beneficiary",
+            "chicken_type",
+            "growth_stage",
+            "date_occurred",
+            "is_present",
+            "year_occurred",
+            "month_occurred",
+            "week_occurred",
+            "day_occurred",
+        ]
+
+
 class FlockHistoryFilterSet(filters.FilterSet):
     flock = filters.CharFilter(lookup_expr="icontains")
     rearing_method = filters.CharFilter(lookup_expr="icontains")

@@ -230,7 +230,6 @@ class FlockViewSet(viewsets.ModelViewSet):
             return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class FlockHistoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = FlockHistory.objects.all()
     serializer_class = FlockHistorySerializer
