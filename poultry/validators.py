@@ -124,11 +124,6 @@ class FlockValidator:
                     "Multipurpose chickens of 8 weeks and below can only be assigned to the Brooder Chick House."
                 )
 
-    @staticmethod
-    def validate_flock_date_of_hatching(date_of_hatching):
-        if date_of_hatching > todays_date:
-            raise ValidationError("Invalid date of hatching, cannot be in future!")
-
 
 class FlockMovementValidator:
     @staticmethod

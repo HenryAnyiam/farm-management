@@ -45,7 +45,6 @@ class HousingStructureSerializer(serializers.ModelSerializer):
 
 
 class FlockSerializer(serializers.ModelSerializer):
-    age_in_weeks = serializers.ReadOnlyField()
     age_in_months = serializers.ReadOnlyField()
     age_in_weeks_in_farm = serializers.ReadOnlyField()
     age_in_months_in_farm = serializers.ReadOnlyField()
@@ -74,7 +73,6 @@ class FlockSerializer(serializers.ModelSerializer):
         fields_to_exclude = [
             "source",
             "breed",
-            "date_of_hatching",
             "chicken_type",
             "initial_number_of_birds",
             "current_housing_structure",

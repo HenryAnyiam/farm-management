@@ -446,3 +446,227 @@ class EggCollectionViewSet(viewsets.ModelViewSet):
             logger.error(f'Exception, {str(e)}')
             return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class FeedPurchaseViewSet(viewsets.ModelViewSet):
+    queryset = FeedPurchase.objects.all()
+    serializer_class = FeedPurchaseSerializer
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = FeedPurchaseFilterSet
+    ordering_fields = ["-date_recorded"]
+
+    def get_queryset(self):
+        user = self.request.user
+        return FeedPurchase.objects.filter(organization=user.organization)
+
+    def update(self, request, *args, **kwargs):
+        # Disallowed update for egg collection records— Temporary.
+        return Response(
+            {"detail": "Updates are not allowed!."},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        if not queryset.exists():
+            return Response([], status=status.HTTP_200_OK)
+
+        serializer = self.get_serializer(queryset, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data={**request.data, 'organization': request.user.organization.id})
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            self.request.user.last_activity = "Logged new feed purchase"
+            self.request.user.save()
+            return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
+        except DRFValidationError as e:
+            return Response({'detail': str(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f'Exception, {str(e)}')
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FeedingViewSet(viewsets.ModelViewSet):
+    queryset = Feeding.objects.all()
+    serializer_class = FeedingSerializer
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = FeedingFilterSet
+    ordering_fields = ["-feed_date", "-feed_time", "-date_recorded"]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Feeding.objects.filter(organization=user.organization)
+
+    def update(self, request, *args, **kwargs):
+        # Disallowed update for egg collection records— Temporary.
+        return Response(
+            {"detail": "Updates are not allowed!."},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        if not queryset.exists():
+            return Response([], status=status.HTTP_200_OK)
+
+        serializer = self.get_serializer(queryset, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data={**request.data, 'organization': request.user.organization.id})
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            self.request.user.last_activity = "Logged new feeding"
+            self.request.user.save()
+            return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
+        except DRFValidationError as e:
+            return Response({'detail': str(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f'Exception, {str(e)}')
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TreatmentViewSet(viewsets.ModelViewSet):
+    queryset = Treatment.objects.all()
+    serializer_class = TreatmentSerializer
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = TreatmentFilterSet
+    ordering_fields = ["-date_administered", "-time_administered", "-date_recorded"]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Treatment.objects.filter(organization=user.organization)
+
+    def update(self, request, *args, **kwargs):
+        # Disallowed update for egg collection records— Temporary.
+        return Response(
+            {"detail": "Updates are not allowed!."},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        if not queryset.exists():
+            return Response([], status=status.HTTP_200_OK)
+
+        serializer = self.get_serializer(queryset, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data={**request.data, 'organization': request.user.organization.id})
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            self.request.user.last_activity = "Logged new flock treatment"
+            self.request.user.save()
+            return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
+        except DRFValidationError as e:
+            return Response({'detail': str(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f'Exception, {str(e)}')
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class EggSalesViewSet(viewsets.ModelViewSet):
+    queryset = EggSales.objects.all()
+    serializer_class = EggSalesSerializer
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = EggSalesFilterSet
+    ordering_fields = ["-date_sold", "-date_recorded"]
+
+    def get_queryset(self):
+        user = self.request.user
+        return EggSales.objects.filter(organization=user.organization)
+
+    def update(self, request, *args, **kwargs):
+        # Disallowed update for egg collection records— Temporary.
+        return Response(
+            {"detail": "Updates are not allowed!."},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        if not queryset.exists():
+            return Response([], status=status.HTTP_200_OK)
+
+        serializer = self.get_serializer(queryset, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data={**request.data, 'organization': request.user.organization.id})
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            self.request.user.last_activity = "Logged new flock treatment"
+            self.request.user.save()
+            return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
+        except DRFValidationError as e:
+            return Response({'detail': str(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f'Exception, {str(e)}')
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FinanceViewSet(viewsets.ModelViewSet):
+    queryset = Finance.objects.all()
+    serializer_class = FinanceSerializer
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = FinanceFilterSet
+    ordering_fields = ["-date_occurred", "-date_recorded"]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Finance.objects.filter(organization=user.organization)
+
+    def update(self, request, *args, **kwargs):
+        # Disallowed update for egg collection records— Temporary.
+        return Response(
+            {"detail": "Updates are not allowed!."},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        if not queryset.exists():
+            return Response([], status=status.HTTP_200_OK)
+
+        serializer = self.get_serializer(queryset, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data={**request.data, 'organization': request.user.organization.id})
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            self.request.user.last_activity = "Logged new flock treatment"
+            self.request.user.save()
+            return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({'detail': e.message}, status=status.HTTP_400_BAD_REQUEST)
+        except DRFValidationError as e:
+            return Response({'detail': str(e.detail)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f'Exception, {str(e)}')
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)

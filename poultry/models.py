@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
@@ -6,6 +6,9 @@ from django.utils import timezone
 from poultry.utils import todays_date
 from poultry.validators import *
 from users.models import Organization
+
+def get_current_time():
+    return timezone.now().time()
 
 #9
 class FlockSource(models.Model):
@@ -127,8 +130,6 @@ class Flock(models.Model):
     Fields:
     - `source`: A foreign key to the `FlockSource` model, representing the source of the flock.
     - `breed`: A foreign key to the `FlockBreed` model, representing the breed of the flock.
-    - `date_of_hatching`: A date field representing the date when the flock hatched.
-                          It is validated to ensure it falls within a specific range.
     - `chicken_type`: A character field representing the type of chickens in the flock.
                       It is limited to a maximum length of 15 characters.
                       The available choices are defined in the `ChickenTypeChoices` enum.
@@ -153,28 +154,18 @@ class Flock(models.Model):
 
     source = models.ForeignKey(FlockSource, on_delete=models.PROTECT, related_name="flocks")
     breed = models.ForeignKey(FlockBreed, on_delete=models.PROTECT, related_name="flocks")
-    date_of_hatching = models.DateField()
     chicken_type = models.CharField(max_length=15, choices=ChickenTypeChoices.choices)
+    age_in_weeks = models.PositiveIntegerField()
     initial_number_of_birds = models.PositiveIntegerField(validators=[MinValueValidator(2)])
     unit_prices = models.PositiveIntegerField()
     initial_weight = models.PositiveIntegerField()
     current_rearing_method = models.CharField(max_length=50, choices=RearingMethodChoices.choices)
     current_housing_structure = models.ForeignKey(HousingStructure, on_delete=models.PROTECT, related_name="flocks")
-    date_established = models.DateField(auto_now_add=True)
+    date_established = models.DateField(default=timezone.now)
     is_present = models.BooleanField(default=True, editable=False)
     name = models.CharField(max_length=50)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE,
                                      related_name='flocks', null=True)
-
-    @property
-    def age_in_weeks(self):
-        """
-        Calculates and returns the age of the flock in weeks.
-
-        """
-        age_in_days = (todays_date - self.date_of_hatching).days
-        age_in_weeks = age_in_days // 7
-        return age_in_weeks
 
     @property
     def age_in_months(self):
@@ -182,7 +173,7 @@ class Flock(models.Model):
         Calculates and returns the age of the flock in months.
 
         """
-        age_in_days = (todays_date - self.date_of_hatching).days
+        age_in_days = (todays_date - timedelta(days=(self.age_in_weeks * 7))).days
         age_in_months = age_in_days // 30
         return age_in_months
 
@@ -209,13 +200,11 @@ class Flock(models.Model):
     def __str__(self):
         """
         Returns a string representation of the flock.
-
         """
         return self.name
 
     def clean(self):
         FlockValidator.validate_chicken_type_update(self)
-        FlockValidator.validate_flock_date_of_hatching(self.date_of_hatching)
         FlockValidator.validate_flock_housing(self.chicken_type, self.current_housing_structure, self.age_in_weeks)
 
     def save(self, *args, **kwargs):
@@ -348,6 +337,7 @@ class EggCollection(models.Model):
         self.clean()
         super().save(*args, **kwargs)
 
+
 class FeedPurchase(models.Model):
 
     name = models.CharField(max_length=250)
@@ -371,8 +361,8 @@ class Feeding(models.Model):
     water_qty = models.FloatField()
     flock = models.ForeignKey(Flock, on_delete=models.CASCADE, related_name='feeding')
     notes = models.TextField(null=True)
-    feed_date = models.DateField()
-    feed_time = models.TimeField()
+    feed_date = models.DateField(default=timezone.now)
+    feed_time = models.TimeField(default=get_current_time)
     date_recorded = models.DateTimeField(auto_now_add=True)
 
 
@@ -389,8 +379,8 @@ class Treatment(models.Model):
     birds_treated = models.PositiveIntegerField()
     veterinarian = models.CharField(max_length=250)
     notes = models.TextField(null=True)
-    date_administered = models.DateField()
-    time_administered = models.TimeField()
+    date_administered = models.DateField(default=timezone.now)
+    time_administered = models.TimeField(default=get_current_time)
     date_recorded = models.DateTimeField(auto_now_add=True)
 
 
@@ -401,7 +391,7 @@ class FlockWeight(models.Model):
     flock = models.ForeignKey(Flock, on_delete=models.CASCADE, related_name='weight')
     weight = models.DecimalField(max_digits=3, decimal_places=2,
                                  validators=[MinValueValidator(0.1), MaxValueValidator(5)])
-    date_weighed = models.DateField()
+    date_weighed = models.DateField(default=timezone.now)
     date_recorded = models.DateTimeField(auto_now_add=True)
 
 
@@ -411,7 +401,7 @@ class EggSales(models.Model):
                                      related_name='egg_sales', null=True)
     no_of_crates = models.PositiveIntegerField()
     unit_price = models.DecimalField(max_digits=20, decimal_places=2)
-    date_sold = models.DateField()
+    date_sold = models.DateField(default=timezone.now)
     date_recorded = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(null=True)
 
@@ -423,6 +413,7 @@ class Finance(models.Model):
     category = models.CharField(max_length=10, choices=FinanceCategoryChoices.choices)
     finance_type = models.CharField(max_length=50)
     amount = models.DecimalField(max_digits=20, decimal_places=2)
-    date_occurred = models.DateField()
+    date_occurred = models.DateField(default=timezone.now)
+    date_recorded = models.DateTimeField(auto_now_add=True)
     beneficiary = models.CharField(max_length=250)
     description = models.TextField(null=True)
