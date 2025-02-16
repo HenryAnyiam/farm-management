@@ -579,7 +579,17 @@ class TreatmentViewSet(viewsets.ModelViewSet):
         try:
             serializer = self.get_serializer(data={**request.data, 'organization': request.user.organization.id})
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            data = serializer.save()
+            finance_serializer = FinanceSerializer(data={
+                'category': 'Expense',
+                'amount': data.associated_cost,
+                'date_occurred': data.date_administered,
+                'organization': request.user.organization.id,
+                'beneficiary': data.veterinarian,
+                'finance_type': 'Flock Treatment'
+            })
+            finance_serializer.is_valid(raise_exception=True)
+            finance_serializer.save()
             self.request.user.last_activity = "Logged new flock treatment"
             self.request.user.save()
             return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)

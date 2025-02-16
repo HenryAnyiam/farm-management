@@ -16,6 +16,7 @@ router.register(r'housing-structures', HousingStructureViewSet, basename='housin
 router.register(r'flock-movements', FlockMovementViewSet, basename='flock-movements')
 router.register(r'feed-purchase', FeedPurchaseViewSet, basename='feed-purchase')
 router.register(r'finance', FinanceViewSet, basename='finance')
+router.register(r'treatment', TreatmentViewSet, basename='treatment')
 router.register(r'flock-inspection-records', FlockInspectionRecordViewSet, basename='flock-inspection-records')
 
 urlpatterns = [
