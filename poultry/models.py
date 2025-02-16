@@ -347,6 +347,7 @@ class FeedPurchase(models.Model):
     growth_stage = models.CharField(max_length=20, choices=GrowthStageChoices.choices)
     unit_price = models.DecimalField(max_digits=20, decimal_places=2)
     size_of_bags = models.PositiveIntegerField()
+    total_bags = models.PositiveIntegerField()
     purchase_date = models.DateField()
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE,
                                      related_name='feeds', null=True)

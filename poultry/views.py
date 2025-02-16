@@ -479,7 +479,17 @@ class FeedPurchaseViewSet(viewsets.ModelViewSet):
         try:
             serializer = self.get_serializer(data={**request.data, 'organization': request.user.organization.id})
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            data = serializer.save()
+            finance_serializer = FinanceSerializer(data={
+                'category': 'Expense',
+                'amount': data.unit_price * data.total_bags,
+                'date_occurred': data.purchase_date,
+                'organization': request.user.organization.id,
+                'beneficiary': data.name,
+                'finance_type': 'Feed Purchase'
+            })
+            finance_serializer.is_valid(raise_exception=True)
+            finance_serializer.save()
             self.request.user.last_activity = "Logged new feed purchase"
             self.request.user.save()
             return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
