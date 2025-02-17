@@ -378,3 +378,15 @@ class EggCollectionValidator:
                                   f"flock, This flock has {live_bird_count} birds, and the collected "
                                   f"eggs today must be {live_bird_count - total_collected_eggs} or lower. The "
                                   f"total collected eggs today is {total_collected_eggs}.")
+
+
+class FeedingValidator:
+
+    @staticmethod
+    def validate_feed_weight(feeding):
+
+        feed_weight = feeding.feed.total_feed_weight
+        total_weight_consumed = feeding.feed.feeding.aggregate(total=Sum('feed_weight'))['total']
+
+        if (total_weight_consumed + feeding.feed_weight) > feed_weight:
+            raise ValidationError("Feed weight is greater than weight available for this feed")

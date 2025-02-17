@@ -2,6 +2,7 @@ from datetime import date, timedelta
 
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
+from django.db.models import Sum
 
 from poultry.utils import todays_date
 from poultry.validators import *
@@ -353,6 +354,14 @@ class FeedPurchase(models.Model):
                                      related_name='feeds', null=True)
     date_recorded = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def total_feed_weight(self):
+        return self.size_of_bags * self.total_bags
+    
+    @property
+    def total_feed_left(self):
+        return (self.size_of_bags * self.total_bags) - self.feeding.aggregate(total=Sum('feed_weight'))['total']
+
 
 class Feeding(models.Model):
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE,
@@ -365,6 +374,13 @@ class Feeding(models.Model):
     feed_date = models.DateField(default=timezone.now)
     feed_time = models.TimeField(default=get_current_time)
     date_recorded = models.DateTimeField(auto_now_add=True)
+
+    def clean(self):
+        FeedingValidator.validate_feed_weight(self)
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
 
 class Treatment(models.Model):
