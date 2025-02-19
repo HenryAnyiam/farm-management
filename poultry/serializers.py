@@ -105,9 +105,18 @@ class FlockHistorySerializer(serializers.ModelSerializer):
 
 class FeedPurchaseSerializer(serializers.ModelSerializer):
 
+    total_feed_weight = serializers.SerializerMethodField(read_only=True)
+    total_feed_left = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = FeedPurchase
         fields = "__all__"
+    
+    def get_total_feed_weight(self, obj):
+        return obj.total_feed_weight
+
+    def get_total_feed_left(self, obj):
+        return obj.total_feed_left
 
 
 class EggSalesSerializer(serializers.ModelSerializer):

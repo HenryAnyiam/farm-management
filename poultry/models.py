@@ -159,7 +159,7 @@ class Flock(models.Model):
     age_in_weeks = models.PositiveIntegerField()
     initial_number_of_birds = models.PositiveIntegerField(validators=[MinValueValidator(2)])
     unit_prices = models.PositiveIntegerField()
-    initial_weight = models.PositiveIntegerField()
+    initial_weight = models.PositiveIntegerField(validators=[MinValueValidator(2)])
     current_rearing_method = models.CharField(max_length=50, choices=RearingMethodChoices.choices)
     current_housing_structure = models.ForeignKey(HousingStructure, on_delete=models.PROTECT, related_name="flocks")
     date_established = models.DateField(default=timezone.now)
