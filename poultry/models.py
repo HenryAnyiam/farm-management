@@ -356,11 +356,21 @@ class FeedPurchase(models.Model):
 
     @property
     def total_feed_weight(self):
-        return self.size_of_bags * self.total_bags
+        return (self.size_of_bags or 1) * (self.total_bags or 1)
     
     @property
     def total_feed_left(self):
-        return (self.size_of_bags * self.total_bags) - self.feeding.aggregate(total=Sum('feed_weight'))['total']
+        size_of_bags = 1
+        if self.size_of_bags:
+            size_of_bags = self.size_of_bags
+        total_bags = 1
+        if self.total_bags:
+            total_bags = self.total_bags
+        total = self.feeding.aggregate(total=Sum('feed_weight'))['total']
+        if not total:
+            total = 0
+        
+        return (size_of_bags * total_bags) - total
 
 
 class Feeding(models.Model):
