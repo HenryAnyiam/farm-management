@@ -137,6 +137,7 @@ class FeedingSerializer(serializers.ModelSerializer):
 
     flock = serializers.PrimaryKeyRelatedField(queryset=Flock.objects.all())
     flock_name = serializers.SerializerMethodField(read_only=True)
+    feed_name = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Feeding
@@ -144,6 +145,9 @@ class FeedingSerializer(serializers.ModelSerializer):
     
     def get_flock_name(self, obj):
         return obj.flock.name if obj.flock else None
+
+    def get_feed_name(self, obj):
+        return obj.feed.name if obj.feed else None
 
 
 class TreatmentSerializer(serializers.ModelSerializer):

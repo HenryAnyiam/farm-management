@@ -387,6 +387,8 @@ class FeedingValidator:
 
         feed_weight = feeding.feed.total_feed_weight
         total_weight_consumed = feeding.feed.feeding.aggregate(total=Sum('feed_weight'))['total']
+        if total_weight_consumed is None:
+            total_weight_consumed = 0
 
         if (total_weight_consumed + feeding.feed_weight) > feed_weight:
             raise ValidationError("Feed weight is greater than weight available for this feed")
