@@ -634,8 +634,18 @@ class EggSalesViewSet(viewsets.ModelViewSet):
         try:
             serializer = self.get_serializer(data={**request.data, 'organization': request.user.organization.id})
             serializer.is_valid(raise_exception=True)
-            serializer.save()
-            self.request.user.last_activity = "Logged new flock treatment"
+            data = serializer.save()
+            finance_serializer = FinanceSerializer(data={
+                'category': 'Revenue',
+                'amount': data.unit_price * data.no_of_crates,
+                'date_occurred': data.date_sold,
+                'organization': request.user.organization.id,
+                'beneficiary': 'Customer',
+                'finance_type': 'Egg Sale'
+            })
+            finance_serializer.is_valid(raise_exception=True)
+            finance_serializer.save()
+            self.request.user.last_activity = "Logged new egg sale"
             self.request.user.save()
             return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
         except ValidationError as e:
@@ -680,7 +690,7 @@ class FinanceViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(data={**request.data, 'organization': request.user.organization.id})
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            self.request.user.last_activity = "Logged new flock treatment"
+            self.request.user.last_activity = "Logged new finance data"
             self.request.user.save()
             return Response({'detail': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
         except ValidationError as e:
